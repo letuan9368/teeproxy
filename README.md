@@ -5,7 +5,7 @@ Script cài `3proxy` cho AlmaLinux, hỗ trợ tối đa `2000` IPv6 proxies.
 ## Chạy nhanh trên VPS
 
 ```bash
-wget https://raw.githubusercontent.com/letuan9368/Tee-Proxy-Pass/main/Tee-Proxy-Pass.sh && chmod +x Tee-Proxy-Pass.sh && bash Tee-Proxy-Pass.sh
+wget https://raw.githubusercontent.com/letuan9368/Tee-Proxy-Pass/master/Tee-Proxy-Pass.sh && chmod +x Tee-Proxy-Pass.sh && bash Tee-Proxy-Pass.sh
 ```
 
 ## Tuỳ chọn tham số
