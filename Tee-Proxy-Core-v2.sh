@@ -102,6 +102,7 @@ net.ipv4.tcp_fin_timeout = 15
 net.ipv4.tcp_tw_reuse = 1
 net.ipv4.tcp_max_syn_backlog = 262144
 net.netfilter.nf_conntrack_max = 1048576
+net.ipv6.ip_nonlocal_bind = 1
 EOF
   sysctl --system >/dev/null 2>&1 || true
 
@@ -342,9 +343,18 @@ run_mode() {
   ip4="$(curl -4 -s --max-time 8 icanhazip.com || true)"
   ip6_prefix="$(detect_ipv6_prefix)"
   iface="$(detect_iface)"
+  local v6_check
+  v6_check="$(curl -6 -s --max-time 8 https://api64.ipify.org || true)"
 
   if [[ -z "${ip4}" || -z "${ip6_prefix}" || -z "${iface}" ]]; then
     echo "Không lấy được IP/interface. Kiểm tra network + IPv6."
+    exit 1
+  fi
+
+  if [[ -z "${v6_check}" ]]; then
+    echo "IPv6 outbound chưa hoạt động trên VPS (curl -6 fail)."
+    echo "Script dừng để tránh tạo proxy lỗi."
+    echo "Hãy yêu cầu nhà cung cấp bật route IPv6 đầy đủ rồi chạy lại."
     exit 1
   fi
 
