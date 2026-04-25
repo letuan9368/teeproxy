@@ -1,179 +1,98 @@
-# Tee-Proxy-Pass
+# TeeProxy v2 Premium
 
-Script cài `3proxy` cho AlmaLinux, hỗ trợ tối đa `2000` IPv6 proxies.
+Bộ script premium cho AlmaLinux 8/9, ưu tiên ổn định tải cao:
+- chạy `3proxy` qua `systemd` foreground (không `daemon` loop)
+- áp dụng tuning kernel + `nofile` cao
+- dùng route local IPv6 `/64` (nhẹ hơn add từng IP)
+- auto dọn và deploy lại sạch mỗi lần chạy
 
-## Chạy nhanh trên VPS
+## 1) HTTP có pass
 
 ```bash
 wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Pass.sh && chmod +x Tee-Proxy-Pass.sh && bash Tee-Proxy-Pass.sh
 ```
 
-## Tuỳ chọn tham số
-
-```bash
-bash Tee-Proxy-Pass.sh [COUNT] [FIRST_PORT]
-```
-
-- `COUNT`: số proxy cần tạo (1 -> 2000), mặc định `2000`
-- `FIRST_PORT`: port bắt đầu, mặc định `22000`
-
-Ví dụ:
-
-```bash
-bash Tee-Proxy-Pass.sh 1500 30000
-```
-
-## Output
-
-- Danh sách proxy: `/home/bkns/proxy.txt`
+- Tham số: `bash Tee-Proxy-Pass.sh [COUNT] [FIRST_PORT]`
+- Mặc định: `2000`, `22000`
+- Output: `/home/bkns/proxy.txt` (`IP:PORT:USER:PASS`)
 - Service: `3proxy-custom`
-- Username tạo theo mẫu: `teeblack` + `5 số ngẫu nhiên` (ví dụ `teeblack48291`)
-- Mỗi lần chạy script sẽ dọn cấu hình/proxy cũ và tạo mới hoàn toàn
 
----
-
-# Tee-Proxy-IP-Port
-
-Script tạo proxy không user/pass (chỉ `IP:PORT`), tối đa `2000` proxies.
-
-## Chạy nhanh trên VPS
+## 2) HTTP không pass
 
 ```bash
 wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-IP-Port.sh && chmod +x Tee-Proxy-IP-Port.sh && bash Tee-Proxy-IP-Port.sh
 ```
 
-## Tuỳ chọn tham số
-
-```bash
-bash Tee-Proxy-IP-Port.sh [COUNT] [FIRST_PORT]
-```
-
-- `COUNT`: số proxy cần tạo (1 -> 2000), mặc định `2000`
-- `FIRST_PORT`: port bắt đầu, mặc định `22000`
-
-## Output
-
-- Danh sách proxy: `/home/bkns/proxy_ip_port.txt`
+- Tham số: `bash Tee-Proxy-IP-Port.sh [COUNT] [FIRST_PORT]`
+- Output: `/home/bkns/proxy_ip_port.txt` (`IP:PORT`)
 - Service: `3proxy-ip-port`
 
----
-
-# Tee-Proxy-Socks5-Pass
-
-Script tạo SOCKS5 proxy có user/pass, tối đa `2000` proxies.
-
-## Chạy nhanh trên VPS
+## 3) SOCKS5 có pass
 
 ```bash
 wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Socks5-Pass.sh && chmod +x Tee-Proxy-Socks5-Pass.sh && bash Tee-Proxy-Socks5-Pass.sh
 ```
 
-## Tuỳ chọn tham số
-
-```bash
-bash Tee-Proxy-Socks5-Pass.sh [COUNT] [FIRST_PORT]
-```
-
-- `COUNT`: số proxy cần tạo (1 -> 2000), mặc định `2000`
-- `FIRST_PORT`: port bắt đầu, mặc định `22000`
-- Username: `teeblack` + 5 số ngẫu nhiên
-- Password: random 8 ký tự (A-Z, a-z, 0-9)
-
-## Output
-
-- Danh sách proxy: `/home/bkns/proxy_socks5_pass.txt` (`IP:PORT:USER:PASS`)
+- Tham số: `bash Tee-Proxy-Socks5-Pass.sh [COUNT] [FIRST_PORT]`
+- Output: `/home/bkns/proxy_socks5_pass.txt` (`IP:PORT:USER:PASS`)
 - Service: `3proxy-socks5-pass`
 
----
-
-# Tee-Proxy-Socks5-IP-Port
-
-Script tạo SOCKS5 proxy không auth (chỉ `IP:PORT`), tối đa `2000` proxies.
-
-## Chạy nhanh trên VPS
+## 4) SOCKS5 không pass
 
 ```bash
 wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Socks5-IP-Port.sh && chmod +x Tee-Proxy-Socks5-IP-Port.sh && bash Tee-Proxy-Socks5-IP-Port.sh
 ```
 
-## Tuỳ chọn tham số
-
-```bash
-bash Tee-Proxy-Socks5-IP-Port.sh [COUNT] [FIRST_PORT]
-```
-
-- `COUNT`: số proxy cần tạo (1 -> 2000), mặc định `2000`
-- `FIRST_PORT`: port bắt đầu, mặc định `22000`
-
-## Output
-
-- Danh sách proxy: `/home/bkns/proxy_socks5_ip_port.txt` (`IP:PORT`)
+- Tham số: `bash Tee-Proxy-Socks5-IP-Port.sh [COUNT] [FIRST_PORT]`
+- Output: `/home/bkns/proxy_socks5_ip_port.txt` (`IP:PORT`)
 - Service: `3proxy-socks5-ip-port`
 
----
-
-# Tee-Proxy-Full-4k
-
-Script tạo cùng lúc 2 loại HTTP:
-- HTTP có pass (`IP:PORT:USER:PASS`)
-- HTTP không pass (`IP:PORT`)
-
-Mỗi loại mặc định `4000` proxy.
-
-## Chạy nhanh trên VPS
+## 5) Full HTTP 4k + 4k
 
 ```bash
 wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Full-4k.sh && chmod +x Tee-Proxy-Full-4k.sh && bash Tee-Proxy-Full-4k.sh
 ```
 
-## Tuỳ chọn tham số
+- Tham số: `bash Tee-Proxy-Full-4k.sh [COUNT] [FIRST_PORT_PASS] [FIRST_PORT_IP_PORT]`
+- Mặc định: `4000`, `22000`, `27000`
+- Output:
+  - `/home/bkns/proxy_full4k_pass.txt`
+  - `/home/bkns/proxy_full4k_ip_port.txt`
+- Services dùng chung:
+  - `3proxy-custom`
+  - `3proxy-ip-port`
 
-```bash
-bash Tee-Proxy-Full-4k.sh [COUNT] [FIRST_PORT_PASS] [FIRST_PORT_IP_PORT]
-```
-
-- `COUNT`: số proxy mỗi loại (1 -> 4000), mặc định `4000`
-- `FIRST_PORT_PASS`: port bắt đầu cho loại có pass, mặc định `22000`
-- `FIRST_PORT_IP_PORT`: port bắt đầu cho loại không pass, mặc định `27000`
-
-## Output
-
-- HTTP có pass: `/home/bkns/proxy_full4k_pass.txt`
-- HTTP không pass: `/home/bkns/proxy_full4k_ip_port.txt`
-- Services:
-  - `3proxy-full4k-pass`
-  - `3proxy-full4k-ip-port`
-
----
-
-# Tee-Proxy-S5-Full-4k
-
-Script tạo cùng lúc 2 loại SOCKS5:
-- SOCKS5 có pass (`IP:PORT:USER:PASS`)
-- SOCKS5 không pass (`IP:PORT`)
-
-Mỗi loại mặc định `4000` proxy.
-
-## Chạy nhanh trên VPS
+## 6) Full SOCKS5 4k + 4k
 
 ```bash
 wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-S5-Full-4k.sh && chmod +x Tee-Proxy-S5-Full-4k.sh && bash Tee-Proxy-S5-Full-4k.sh
 ```
 
-## Tuỳ chọn tham số
+- Tham số: `bash Tee-Proxy-S5-Full-4k.sh [COUNT] [FIRST_PORT_PASS] [FIRST_PORT_IP_PORT]`
+- Mặc định: `4000`, `32000`, `37000`
+- Output:
+  - `/home/bkns/proxy_s5_full4k_pass.txt`
+  - `/home/bkns/proxy_s5_full4k_ip_port.txt`
+- Services dùng chung:
+  - `3proxy-socks5-pass`
+  - `3proxy-socks5-ip-port`
+
+## 7) Tuning riêng
 
 ```bash
-bash Tee-Proxy-S5-Full-4k.sh [COUNT] [FIRST_PORT_PASS] [FIRST_PORT_IP_PORT]
+wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Optimize.sh && chmod +x Tee-Proxy-Optimize.sh && bash Tee-Proxy-Optimize.sh
 ```
 
-- `COUNT`: số proxy mỗi loại (1 -> 4000), mặc định `4000`
-- `FIRST_PORT_PASS`: port bắt đầu cho loại có pass, mặc định `32000`
-- `FIRST_PORT_IP_PORT`: port bắt đầu cho loại không pass, mặc định `37000`
+## 8) Healthcheck nhanh
 
-## Output
+```bash
+wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Check.sh && chmod +x Tee-Proxy-Check.sh && bash Tee-Proxy-Check.sh /home/bkns/proxy.txt 20
+```
 
-- SOCKS5 có pass: `/home/bkns/proxy_s5_full4k_pass.txt`
-- SOCKS5 không pass: `/home/bkns/proxy_s5_full4k_ip_port.txt`
-- Services:
-  - `3proxy-s5-full4k-pass`
-  - `3proxy-s5-full4k-ip-port`
+## Gợi ý vận hành ổn định
+
+- VPS 8 vCPU/16 GB RAM trở lên nếu chạy profile 4k + 4k.
+- Nếu mới deploy: chạy 1000 trước, tăng dần 2000 rồi 4000.
+- Kiểm tra nhanh:
+  - `systemctl is-active 3proxy-custom`
+  - `ss -lntp | rg 3proxy | head`
