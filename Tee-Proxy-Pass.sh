@@ -165,6 +165,25 @@ WantedBy=multi-user.target
 EOF
 }
 
+cleanup_old_state() {
+  local iface="$1"
+  echo "[*] Cleaning old proxy state..."
+
+  systemctl stop 3proxy-custom >/dev/null 2>&1 || true
+  pkill -f "${PROXY_BIN}" >/dev/null 2>&1 || true
+
+  if [[ -f "${WORKDATA}" ]]; then
+    while IFS='/' read -r _user _pass _ip4 _port ipv6; do
+      ip -6 addr del "${ipv6}/64" dev "${iface}" 2>/dev/null || true
+    done < "${WORKDATA}"
+  fi
+
+  rm -f "${WORKDATA}" \
+        "${WORKDIR}/proxy.txt" \
+        "${WORKDIR}/boot_ifconfig.sh" \
+        "${PROXY_CFG}"
+}
+
 main() {
   if [[ "${EUID}" -ne 0 ]]; then
     echo "Hãy chạy script bằng root."
@@ -194,6 +213,7 @@ main() {
   echo "[*] Interface: ${iface}"
   echo "[*] Ports: ${FIRST_PORT}-${LAST_PORT} (${COUNT} proxies)"
 
+  cleanup_old_state "${iface}"
   gen_data "${ip4}" "${ip6_prefix}"
   gen_if_script "${iface}"
   gen_3proxy_cfg
