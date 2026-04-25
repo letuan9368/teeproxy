@@ -109,3 +109,37 @@ bash Tee-Proxy-Socks5-IP-Port.sh [COUNT] [FIRST_PORT]
 
 - Danh sách proxy: `/home/bkns/proxy_socks5_ip_port.txt` (`IP:PORT`)
 - Service: `3proxy-socks5-ip-port`
+
+---
+
+# Tee-Proxy-Full-4k
+
+Script tạo cùng lúc 2 loại HTTP:
+- HTTP có pass (`IP:PORT:USER:PASS`)
+- HTTP không pass (`IP:PORT`)
+
+Mỗi loại mặc định `4000` proxy.
+
+## Chạy nhanh trên VPS
+
+```bash
+wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Full-4k.sh && chmod +x Tee-Proxy-Full-4k.sh && bash Tee-Proxy-Full-4k.sh
+```
+
+## Tuỳ chọn tham số
+
+```bash
+bash Tee-Proxy-Full-4k.sh [COUNT] [FIRST_PORT_PASS] [FIRST_PORT_IP_PORT]
+```
+
+- `COUNT`: số proxy mỗi loại (1 -> 4000), mặc định `4000`
+- `FIRST_PORT_PASS`: port bắt đầu cho loại có pass, mặc định `22000`
+- `FIRST_PORT_IP_PORT`: port bắt đầu cho loại không pass, mặc định `27000`
+
+## Output
+
+- HTTP có pass: `/home/bkns/proxy_full4k_pass.txt`
+- HTTP không pass: `/home/bkns/proxy_full4k_ip_port.txt`
+- Services:
+  - `3proxy-full4k-pass`
+  - `3proxy-full4k-ip-port`
