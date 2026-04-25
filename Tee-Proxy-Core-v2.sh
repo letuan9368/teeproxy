@@ -11,6 +11,7 @@ PREFIX_FILE="${WORKDIR}/.teeproxy_ipv6_prefix"
 PROXY_BIN="/usr/local/etc/3proxy/bin/3proxy"
 SYSTEM_LIMITS="/etc/security/limits.d/99-teeproxy.conf"
 SYSCTL_FILE="/etc/sysctl.d/99-teeproxy.conf"
+TEEPROXY_IP_MODE="${TEEPROXY_IP_MODE:-auto}"
 
 random_pass() {
   tr </dev/urandom -dc 'A-Za-z0-9' | head -c8
@@ -239,11 +240,19 @@ deploy_single_mode() {
         [[ -z "${used_users[$user]+x}" ]] && break
       done
       used_users["${user}"]=1
-      echo "${user}/$(random_pass)/${ip4}/${port}/$(gen_ipv6 "${ip6_prefix}")" >> "${data_file}"
+      if [[ "${TEEPROXY_IP_MODE}" == "ipv4" ]]; then
+        echo "${user}/$(random_pass)/${ip4}/${port}/" >> "${data_file}"
+      else
+        echo "${user}/$(random_pass)/${ip4}/${port}/$(gen_ipv6 "${ip6_prefix}")" >> "${data_file}"
+      fi
     done
   else
     for ((port=first_port; port<=last_port; port++)); do
-      echo "${ip4}/${port}/$(gen_ipv6 "${ip6_prefix}")" >> "${data_file}"
+      if [[ "${TEEPROXY_IP_MODE}" == "ipv4" ]]; then
+        echo "${ip4}/${port}/" >> "${data_file}"
+      else
+        echo "${ip4}/${port}/$(gen_ipv6 "${ip6_prefix}")" >> "${data_file}"
+      fi
     done
   fi
 
@@ -254,10 +263,14 @@ deploy_single_mode() {
       echo
       echo "users $(awk -F "/" 'BEGIN{ORS=""} {print $1 ":CL:" $2 " "}' "${data_file}")"
       echo
-      awk -F "/" -v cmd="${cmd_type}" '{
+      awk -F "/" -v cmd="${cmd_type}" -v mode="${TEEPROXY_IP_MODE}" '{
         print "auth strong"
         print "allow " $1
-        print cmd " -6 -n -a -p" $4 " -i" $3 " -e" $5
+        if (mode == "ipv4") {
+          print cmd " -n -a -p" $4 " -i" $3
+        } else {
+          print cmd " -6 -n -a -p" $4 " -i" $3 " -e" $5
+        }
         print "flush"
         print ""
       }' "${data_file}"
@@ -265,8 +278,12 @@ deploy_single_mode() {
       echo "auth none"
       echo "allow *"
       echo
-      awk -F "/" -v cmd="${cmd_type}" '{
-        print cmd " -6 -n -a -p" $2 " -i" $1 " -e" $3
+      awk -F "/" -v cmd="${cmd_type}" -v mode="${TEEPROXY_IP_MODE}" '{
+        if (mode == "ipv4") {
+          print cmd " -n -a -p" $2 " -i" $1
+        } else {
+          print cmd " -6 -n -a -p" $2 " -i" $1 " -e" $3
+        }
         print "flush"
         print ""
       }' "${data_file}"
@@ -351,18 +368,29 @@ run_mode() {
     exit 1
   fi
 
-  if [[ -z "${v6_check}" ]]; then
-    echo "IPv6 outbound chưa hoạt động trên VPS (curl -6 fail)."
-    echo "Script dừng để tránh tạo proxy lỗi."
-    echo "Hãy yêu cầu nhà cung cấp bật route IPv6 đầy đủ rồi chạy lại."
+  if [[ "${TEEPROXY_IP_MODE}" == "auto" ]]; then
+    if [[ -z "${v6_check}" ]]; then
+      TEEPROXY_IP_MODE="ipv4"
+      echo "IPv6 outbound chưa hoạt động, tự động fallback sang IPv4-only mode."
+    else
+      TEEPROXY_IP_MODE="ipv6"
+    fi
+  fi
+
+  if [[ "${TEEPROXY_IP_MODE}" == "ipv6" && -z "${v6_check}" ]]; then
+    echo "TEEPROXY_IP_MODE=ipv6 nhưng VPS chưa có IPv6 outbound."
+    echo "Dùng TEEPROXY_IP_MODE=ipv4 hoặc sửa route IPv6 rồi chạy lại."
     exit 1
   fi
 
-  ensure_ipv6_local_route "${ip6_prefix}"
+  if [[ "${TEEPROXY_IP_MODE}" == "ipv6" ]]; then
+    ensure_ipv6_local_route "${ip6_prefix}"
+  fi
 
   echo "[*] IPv4: ${ip4}"
   echo "[*] IPv6 prefix: ${ip6_prefix}"
   echo "[*] Interface: ${iface}"
+  echo "[*] IP mode: ${TEEPROXY_IP_MODE}"
 
   case "${mode}" in
     http_pass|http_ipport|socks5_pass|socks5_ipport)

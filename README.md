@@ -93,6 +93,12 @@ wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Chec
 
 - VPS 8 vCPU/16 GB RAM trở lên nếu chạy profile 4k + 4k.
 - Nếu mới deploy: chạy 1000 trước, tăng dần 2000 rồi 4000.
+- Mặc định script chạy `TEEPROXY_IP_MODE=auto`:
+  - có IPv6 outbound -> dùng IPv6 proxy
+  - không có IPv6 outbound -> tự fallback IPv4-only
+- Ép mode khi cần:
+  - `TEEPROXY_IP_MODE=ipv4 bash Tee-Proxy-Pass.sh`
+  - `TEEPROXY_IP_MODE=ipv6 bash Tee-Proxy-Pass.sh`
 - Kiểm tra nhanh:
   - `systemctl is-active 3proxy-custom`
   - `ss -lntp | rg 3proxy | head`
