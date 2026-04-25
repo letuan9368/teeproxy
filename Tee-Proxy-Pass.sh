@@ -2,9 +2,9 @@
 set -euo pipefail
 
 # Usage:
-#   bash proxy-2000.sh [COUNT] [FIRST_PORT]
+#   bash Tee-Proxy-Pass.sh [COUNT] [FIRST_PORT]
 # Example:
-#   bash proxy-2000.sh 2000 22000
+#   bash Tee-Proxy-Pass.sh 2000 22000
 
 MAX_PROXIES=2000
 COUNT="${1:-2000}"
@@ -39,6 +39,11 @@ PROXY_SERVICE="/etc/systemd/system/3proxy-custom.service"
 
 random_pass() {
   tr </dev/urandom -dc 'A-Za-z0-9' | head -c8
+  echo
+}
+
+random_5_digits() {
+  tr </dev/urandom -dc '0-9' | head -c5
   echo
 }
 
@@ -80,9 +85,17 @@ install_3proxy() {
 gen_data() {
   local ip4="$1"
   local ip6_prefix="$2"
+  local username suffix
+  declare -A used_users=()
   : > "$WORKDATA"
   for ((port=FIRST_PORT; port<=LAST_PORT; port++)); do
-    echo "user${port}/$(random_pass)/${ip4}/${port}/$(gen_ipv6 "$ip6_prefix")" >> "$WORKDATA"
+    while true; do
+      suffix="$(random_5_digits)"
+      username="teeblack${suffix}"
+      [[ -z "${used_users[$username]+x}" ]] && break
+    done
+    used_users["$username"]=1
+    echo "${username}/$(random_pass)/${ip4}/${port}/$(gen_ipv6 "$ip6_prefix")" >> "$WORKDATA"
   done
 }
 

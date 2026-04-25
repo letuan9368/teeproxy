@@ -27,3 +27,4 @@ bash Tee-Proxy-Pass.sh 1500 30000
 
 - Danh sách proxy: `/home/bkns/proxy.txt`
 - Service: `3proxy-custom`
+- Username tạo theo mẫu: `teeblack` + `5 số ngẫu nhiên` (ví dụ `teeblack48291`)
