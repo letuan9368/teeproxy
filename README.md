@@ -55,3 +55,31 @@ bash Tee-Proxy-IP-Port.sh [COUNT] [FIRST_PORT]
 
 - Danh sách proxy: `/home/bkns/proxy_ip_port.txt`
 - Service: `3proxy-ip-port`
+
+---
+
+# Tee-Proxy-Socks5-Pass
+
+Script tạo SOCKS5 proxy có user/pass, tối đa `2000` proxies.
+
+## Chạy nhanh trên VPS
+
+```bash
+wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Socks5-Pass.sh && chmod +x Tee-Proxy-Socks5-Pass.sh && bash Tee-Proxy-Socks5-Pass.sh
+```
+
+## Tuỳ chọn tham số
+
+```bash
+bash Tee-Proxy-Socks5-Pass.sh [COUNT] [FIRST_PORT]
+```
+
+- `COUNT`: số proxy cần tạo (1 -> 2000), mặc định `2000`
+- `FIRST_PORT`: port bắt đầu, mặc định `22000`
+- Username: `teeblack` + 5 số ngẫu nhiên
+- Password: random 8 ký tự (A-Z, a-z, 0-9)
+
+## Output
+
+- Danh sách proxy: `/home/bkns/proxy_socks5_pass.txt` (`IP:PORT:USER:PASS`)
+- Service: `3proxy-socks5-pass`
