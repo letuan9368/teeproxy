@@ -116,7 +116,11 @@ EOF
 ensure_ipv6_local_route() {
   local prefix="$1"
   local cidr="${prefix}::/64"
-  ip -6 route show local | rg -q "${prefix}::/64" || ip -6 route add local "${cidr}" dev lo
+  if ip -6 route show table local | grep -q "${prefix}::/64"; then
+    :
+  else
+    ip -6 route add local "${cidr}" dev lo table local 2>/dev/null || true
+  fi
   echo "${prefix}" > "${PREFIX_FILE}"
 }
 
