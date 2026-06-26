@@ -73,7 +73,19 @@ ensure_count_and_ports() {
 }
 
 install_deps() {
-  dnf -y install gcc make wget tar curl iproute --nobest --skip-broken >/dev/null
+  local pkgs=(gcc make wget tar curl iproute)
+  local missing=()
+  local pkg
+
+  for pkg in "${pkgs[@]}"; do
+    rpm -q "${pkg}" >/dev/null 2>&1 || missing+=("${pkg}")
+  done
+
+  if ((${#missing[@]} == 0)); then
+    return
+  fi
+
+  dnf -y install "${missing[@]}" --nobest --skip-broken --setopt=timeout=120 >/dev/null
 }
 
 install_3proxy_if_needed() {
@@ -356,35 +368,37 @@ run_mode() {
   install_3proxy_if_needed
   apply_system_tuning
 
-  local ip4 ip6_prefix iface
+  local ip4 ip6_prefix iface v6_check
   ip4="$(curl -4 -s --max-time 8 icanhazip.com || true)"
-  ip6_prefix="$(detect_ipv6_prefix)"
   iface="$(detect_iface)"
-  local v6_check
-  v6_check="$(curl -6 -s --max-time 8 https://api64.ipify.org || true)"
 
-  if [[ -z "${ip4}" || -z "${ip6_prefix}" || -z "${iface}" ]]; then
-    echo "Không lấy được IP/interface. Kiểm tra network + IPv6."
+  if [[ -z "${ip4}" || -z "${iface}" ]]; then
+    echo "Không lấy được IPv4 hoặc interface. Kiểm tra network."
     exit 1
   fi
 
+  ip6_prefix="$(detect_ipv6_prefix)"
+  v6_check="$(curl -6 -s --max-time 8 https://api64.ipify.org || true)"
+
   if [[ "${TEEPROXY_IP_MODE}" == "auto" ]]; then
-    if [[ -z "${v6_check}" ]]; then
+    if [[ -z "${v6_check}" || -z "${ip6_prefix}" ]]; then
       TEEPROXY_IP_MODE="ipv4"
+      ip6_prefix="(không dùng)"
       echo "IPv6 outbound chưa hoạt động, tự động fallback sang IPv4-only mode."
     else
       TEEPROXY_IP_MODE="ipv6"
     fi
   fi
 
-  if [[ "${TEEPROXY_IP_MODE}" == "ipv6" && -z "${v6_check}" ]]; then
-    echo "TEEPROXY_IP_MODE=ipv6 nhưng VPS chưa có IPv6 outbound."
-    echo "Dùng TEEPROXY_IP_MODE=ipv4 hoặc sửa route IPv6 rồi chạy lại."
-    exit 1
-  fi
-
   if [[ "${TEEPROXY_IP_MODE}" == "ipv6" ]]; then
+    if [[ -z "${v6_check}" || -z "${ip6_prefix}" ]]; then
+      echo "TEEPROXY_IP_MODE=ipv6 nhưng VPS chưa có IPv6 outbound."
+      echo "Dùng TEEPROXY_IP_MODE=ipv4 hoặc sửa route IPv6 rồi chạy lại."
+      exit 1
+    fi
     ensure_ipv6_local_route "${ip6_prefix}"
+  else
+    ip6_prefix="${ip6_prefix:-(không dùng)}"
   fi
 
   echo "[*] IPv4: ${ip4}"

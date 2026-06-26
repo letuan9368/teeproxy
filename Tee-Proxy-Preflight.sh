@@ -14,13 +14,12 @@ else
   ok=0
 fi
 
-echo "[2] Public IPv6"
+echo "[2] Public IPv6 (tùy chọn — IPv4-only vẫn chạy được)"
 ipv6="$(curl -6 -s --max-time 8 https://api64.ipify.org || true)"
 if [[ -n "${ipv6}" ]]; then
   echo "  OK: ${ipv6}"
 else
-  echo "  FAIL: Khong lay duoc IPv6 outbound"
-  ok=0
+  echo "  WARN: Không có IPv6 outbound (script sẽ fallback IPv4)"
 fi
 
 echo "[3] Interface va default route"
@@ -32,9 +31,13 @@ sysctl net.ipv6.conf.all.disable_ipv6 2>/dev/null || true
 sysctl net.ipv6.ip_nonlocal_bind 2>/dev/null || true
 
 if [[ "${ok}" -eq 1 ]]; then
-  echo "RESULT: READY (co IPv4 + IPv6 outbound)"
+  if [[ -n "${ipv6}" ]]; then
+    echo "RESULT: READY (co IPv4 + IPv6 outbound)"
+  else
+    echo "RESULT: READY (IPv4 only — dung TEEPROXY_IP_MODE=ipv4 hoac auto)"
+  fi
   exit 0
 else
-  echo "RESULT: NOT_READY (thieu outbound IPv4/IPv6)"
+  echo "RESULT: NOT_READY (thieu IPv4 outbound)"
   exit 2
 fi
