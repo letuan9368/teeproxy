@@ -85,7 +85,11 @@ install_deps() {
     return
   fi
 
-  dnf -y install "${missing[@]}" --nobest --skip-broken --setopt=timeout=120 >/dev/null
+  echo "[*] Cai goi: ${missing[*]}"
+  if ! dnf -y install "${missing[@]}" --nobest --skip-broken --setopt=timeout=120; then
+    echo "dnf that bai. Chay: bash Tee-Proxy-Fix-Dnf.sh roi thu lai."
+    exit 1
+  fi
 }
 
 install_3proxy_if_needed() {
@@ -310,7 +314,10 @@ deploy_single_mode() {
 
   write_service_file "${service}" "${cfg_file}"
   systemctl daemon-reload
-  systemctl enable --now "${service}" >/dev/null
+  if ! systemctl enable --now "${service}"; then
+    echo "Service ${service} khong start duoc. Xem: journalctl -u ${service} -n 30 --no-pager"
+    exit 1
+  fi
 
   echo "[*] Mode: ${mode}"
   echo "[*] Service: ${service} -> $(systemctl is-active "${service}")"
@@ -363,6 +370,7 @@ run_mode() {
   local p1="$3"
   local p2="${4:-}"
 
+  echo "[*] TeeProxy bat dau (mode=${mode}, count=${count})..."
   ensure_root
   install_deps
   install_3proxy_if_needed

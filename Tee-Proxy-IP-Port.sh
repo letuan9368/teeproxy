@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+echo "[*] Tee-Proxy-IP-Port.sh (HTTP khong pass, output IP:PORT)"
+
 COUNT="${1:-2000}"
 FIRST_PORT="${2:-22000}"
 
