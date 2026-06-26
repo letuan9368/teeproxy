@@ -9,7 +9,7 @@ Bộ script premium cho AlmaLinux 8/9, ưu tiên ổn định tải cao:
 ## 1) HTTP có pass
 
 ```bash
-wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Pass.sh && chmod +x Tee-Proxy-Pass.sh && bash Tee-Proxy-Pass.sh
+wget -O Tee-Proxy-Pass.sh https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Pass.sh && chmod +x Tee-Proxy-Pass.sh && bash Tee-Proxy-Pass.sh
 ```
 
 - Tham số: `bash Tee-Proxy-Pass.sh [COUNT] [FIRST_PORT]`
@@ -20,7 +20,7 @@ wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Pass
 ## 2) HTTP không pass
 
 ```bash
-wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-IP-Port.sh && chmod +x Tee-Proxy-IP-Port.sh && bash Tee-Proxy-IP-Port.sh
+wget -O Tee-Proxy-IP-Port.sh https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-IP-Port.sh && chmod +x Tee-Proxy-IP-Port.sh && bash Tee-Proxy-IP-Port.sh
 ```
 
 - Tham số: `bash Tee-Proxy-IP-Port.sh [COUNT] [FIRST_PORT]`
@@ -30,7 +30,7 @@ wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-IP-P
 ## 3) SOCKS5 có pass
 
 ```bash
-wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Socks5-Pass.sh && chmod +x Tee-Proxy-Socks5-Pass.sh && bash Tee-Proxy-Socks5-Pass.sh
+wget -O Tee-Proxy-Socks5-Pass.sh https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Socks5-Pass.sh && chmod +x Tee-Proxy-Socks5-Pass.sh && bash Tee-Proxy-Socks5-Pass.sh
 ```
 
 - Tham số: `bash Tee-Proxy-Socks5-Pass.sh [COUNT] [FIRST_PORT]`
@@ -40,7 +40,7 @@ wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Sock
 ## 4) SOCKS5 không pass
 
 ```bash
-wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Socks5-IP-Port.sh && chmod +x Tee-Proxy-Socks5-IP-Port.sh && bash Tee-Proxy-Socks5-IP-Port.sh
+wget -O Tee-Proxy-Socks5-IP-Port.sh https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Socks5-IP-Port.sh && chmod +x Tee-Proxy-Socks5-IP-Port.sh && bash Tee-Proxy-Socks5-IP-Port.sh
 ```
 
 - Tham số: `bash Tee-Proxy-Socks5-IP-Port.sh [COUNT] [FIRST_PORT]`
@@ -50,7 +50,7 @@ wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Sock
 ## 5) Full HTTP 4k + 4k
 
 ```bash
-wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Full-4k.sh && chmod +x Tee-Proxy-Full-4k.sh && bash Tee-Proxy-Full-4k.sh
+wget -O Tee-Proxy-Full-4k.sh https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Full-4k.sh && chmod +x Tee-Proxy-Full-4k.sh && bash Tee-Proxy-Full-4k.sh
 ```
 
 - Tham số: `bash Tee-Proxy-Full-4k.sh [COUNT] [FIRST_PORT_PASS] [FIRST_PORT_IP_PORT]`
@@ -65,7 +65,7 @@ wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Full
 ## 6) Full SOCKS5 4k + 4k
 
 ```bash
-wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-S5-Full-4k.sh && chmod +x Tee-Proxy-S5-Full-4k.sh && bash Tee-Proxy-S5-Full-4k.sh
+wget -O Tee-Proxy-S5-Full-4k.sh https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-S5-Full-4k.sh && chmod +x Tee-Proxy-S5-Full-4k.sh && bash Tee-Proxy-S5-Full-4k.sh
 ```
 
 - Tham số: `bash Tee-Proxy-S5-Full-4k.sh [COUNT] [FIRST_PORT_PASS] [FIRST_PORT_IP_PORT]`
@@ -80,16 +80,19 @@ wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-S5-F
 ## 7) Tuning riêng
 
 ```bash
-wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Optimize.sh && chmod +x Tee-Proxy-Optimize.sh && bash Tee-Proxy-Optimize.sh
+wget -O Tee-Proxy-Optimize.sh https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Optimize.sh && chmod +x Tee-Proxy-Optimize.sh && bash Tee-Proxy-Optimize.sh
 ```
 
 ## 8) Healthcheck nhanh
 
 ```bash
-wget https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Check.sh && chmod +x Tee-Proxy-Check.sh && bash Tee-Proxy-Check.sh /home/bkns/proxy.txt 20
+wget -O Tee-Proxy-Check.sh https://raw.githubusercontent.com/letuan9368/teeproxy/master/Tee-Proxy-Check.sh && chmod +x Tee-Proxy-Check.sh && bash Tee-Proxy-Check.sh /home/bkns/proxy.txt 20
 ```
 
 ## Gợi ý vận hành ổn định
+
+- Luôn dùng `wget -O ten-file.sh URL` để ghi đè file cũ (tránh tạo `file.sh.1` khi lần trước 404).
+- Nếu đã có file lỗi: `rm -f Tee-Proxy-*.sh Tee-Proxy-*.sh.*` rồi tải lại.
 
 - VPS 8 vCPU/16 GB RAM trở lên nếu chạy profile 4k + 4k.
 - Nếu mới deploy: chạy 1000 trước, tăng dần 2000 rồi 4000.
